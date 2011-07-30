@@ -1847,6 +1847,75 @@ err:
 }
 #endif
 
+static void stepcharger_statemachine(struct chg_data *chg)
+{
+  struct i2c_client *i2c = chg->iodev->i2c;
+  u8 data = 0;
+  u8 ichg = 0;
+  u32 batt_voltage = 0;
+  int ret;
+
+  bat_dbg(" [BAT] Entered stepcharger state machine \n"); 
+  ret = max8998_read_reg(i2c,MAX8998_REG_CHGR1,&data);
+  ichg = (data & 0x7);
+
+  batt_voltage = chg->bat_info.batt_vcell/1000;
+
+  bat_dbg(" [BAT] ICHG was 0x%02x \n",ichg);
+  bat_dbg(" [BAT] Voltage was %d\n",batt_voltage);
+
+  if((ichg == 0x4) || (ichg == 0x3))
+    {
+       if(batt_voltage < 4100)
+	{
+	  bat_dbg(" [BAT] increase current to 600 mA\n ");
+	  data = (data & 0xF8) | 0x05;
+	  max8998_write_reg(i2c,MAX8998_REG_CHGR1,data);
+	}     
+    }
+  if(ichg == 0x5)
+    {
+      if(batt_voltage < 4050)
+	{
+	  bat_dbg(" [BAT] increase current to 700 mA\n ");
+	  data = (data & 0xF8) | 0x06;
+	  max8998_write_reg(i2c,MAX8998_REG_CHGR1,data);
+	}
+      if(batt_voltage > 4150)
+	{
+	  bat_dbg(" [BAT] decrease current to 550 mA\n ");
+	  data = (data & 0xF8) | 0x03;
+	  max8998_write_reg(i2c,MAX8998_REG_CHGR1,data);
+	}
+    }
+  if(ichg == 0x6)
+    {
+      if(batt_voltage < 4000)
+	{
+	  bat_dbg(" [BAT] increase current to 800 mA\n ");
+	  data = (data & 0xF8) | 0x07;
+	  max8998_write_reg(i2c,MAX8998_REG_CHGR1,data);
+	}
+      if(batt_voltage > 4100)
+	{
+	  bat_dbg(" [BAT] decrease current to 600 mA\n ");
+	  data = (data & 0xF8) | 0x05;
+	  max8998_write_reg(i2c,MAX8998_REG_CHGR1,data);
+	}
+    }
+  if(ichg == 0x7)
+    {
+      if(batt_voltage > 4050)
+	{
+	  bat_dbg(" [BAT] decrease current to 700 mA\n ");
+	  data = (data & 0xF8) | 0x06;
+	  max8998_write_reg(i2c,MAX8998_REG_CHGR1,data);
+	}
+    }
+
+
+}
+
 static void s3c_bat_work(struct work_struct *work)
 {
 	struct chg_data *chg = container_of(work, struct chg_data, bat_work);
@@ -1864,6 +1933,11 @@ static void s3c_bat_work(struct work_struct *work)
 
 	s3c_bat_discharge_reason(chg);
 	s3c_cable_check_status(chg);	
+		
+	if (chg->charging)
+	  {
+	    stepcharger_statemachine(chg);
+	  }
 	
 	if ( (  (chg->bat_info.batt_vcell/1000) >= FULL_CHARGE_COND_VOLTAGE)  && chg->charging)
 		{
@@ -2301,7 +2375,7 @@ void max8998_int_work_func(struct work_struct *work)
 
 	if (chg->esafe == MAX8998_ESAFE_ALLOFF)
 		chg->esafe = MAX8998_USB_VBUS_AP_ON;
-	bat_dbg("%s : cable_status(%d) esafe(%d)\n", __func__, status, chg->esafe);	
+	bat_dbg("%s : cable_status(%d) esafe(%d)\n", __func__, UsbStatus, chg->esafe);	
 	
 	power_supply_changed(&chg->psy_ac);
 	power_supply_changed(&chg->psy_usb);
