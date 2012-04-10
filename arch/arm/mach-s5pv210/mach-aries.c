@@ -420,7 +420,7 @@ static struct s3cfb_lcd s6e63m0 = {
 #define  S5PV210_VIDEO_SAMSUNG_MEMSIZE_TEXTSTREAM (3000 * SZ_1K)
 #else	// optimized settings, 19th Jan.2011
 #define  S5PV210_VIDEO_SAMSUNG_MEMSIZE_FIMC0 (12288 * SZ_1K)
-#define  S5PV210_VIDEO_SAMSUNG_MEMSIZE_FIMC1 (9900 * SZ_1K)
+//#define  S5PV210_VIDEO_SAMSUNG_MEMSIZE_FIMC1 (9900 * SZ_1K)
 #define  S5PV210_VIDEO_SAMSUNG_MEMSIZE_FIMC2 (12288 * SZ_1K)
 #if !defined(CONFIG_ARIES_NTT)   
 #if  defined(CONFIG_S5PC110_DEMPSEY_BOARD)/* Dempsey - support playing 1080p */	
@@ -472,6 +472,7 @@ static struct s5p_media_device aries_media_devs[] = {
 		.memsize = S5PV210_VIDEO_SAMSUNG_MEMSIZE_FIMC0,
 		.paddr = 0,
 	},
+/*
 	[3] = {
 		.id = S5P_MDEV_FIMC1,
 		.name = "fimc1",
@@ -479,6 +480,7 @@ static struct s5p_media_device aries_media_devs[] = {
 		.memsize = S5PV210_VIDEO_SAMSUNG_MEMSIZE_FIMC1,
 		.paddr = 0,
 	},
+*/
 	[4] = {
 		.id = S5P_MDEV_FIMC2,
 		.name = "fimc2",
