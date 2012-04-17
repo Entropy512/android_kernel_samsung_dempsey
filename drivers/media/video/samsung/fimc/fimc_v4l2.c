@@ -163,6 +163,12 @@ static int fimc_cropcap(struct file *filp, void *fh, struct v4l2_cropcap *a)
 	struct fimc_control *ctrl = ((struct fimc_prv_data *)fh)->ctrl;
 	int ret = -1;
 
+	fimc_info1("%s called: bounds l/t/w/h:%d/%d/%d/%d, defrect l/t/w/h:%d/%d/%d/%d, pixelaspect n/d=%d/%d\n"
+		,__func__,
+		a->bounds.left,a->bounds.top,a->bounds.width,a->bounds.height,
+		a->defrect.left,a->defrect.top,a->defrect.width,a->defrect.height,
+		a->pixelaspect.numerator,a->pixelaspect.denominator);
+
 	if (a->type == V4L2_BUF_TYPE_VIDEO_CAPTURE) {
 		ret = fimc_cropcap_capture(fh, a);
 	} else if (a->type == V4L2_BUF_TYPE_VIDEO_OUTPUT) {
@@ -198,6 +204,10 @@ static int fimc_s_crop(struct file *filp, void *fh, struct v4l2_crop *a)
 {
 	struct fimc_control *ctrl = ((struct fimc_prv_data *)fh)->ctrl;
 	int ret = -1;
+
+	fimc_info1("%s called: c l/t/w/h:%d/%d/%d/%d\n"
+		,__func__,
+		a->c.left,a->c.top,a->c.width,a->c.height);
 
 	if (a->type == V4L2_BUF_TYPE_VIDEO_CAPTURE) {
 		ret = fimc_s_crop_capture(fh, a);

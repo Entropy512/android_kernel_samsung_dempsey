@@ -31,7 +31,14 @@
 #define subdev_call(ctrl, o, f, args...) \
 	v4l2_subdev_call(ctrl->cam->sd, o, f, ##args)
 
-/* #define FIMC_CAP_DEBUG */
+#define FIMC_CAP_DEBUG
+
+#define FOURCC_ARGS(fourcc) ((char) ((fourcc)     &0xff)), \
+        ((char) (((fourcc)>>8 )&0xff)), \
+        ((char) (((fourcc)>>16)&0xff)), \
+        ((char) (((fourcc)>>24)&0xff))
+
+#define FOURCC_FORMAT  "%c%c%c%c"
 
 #ifdef FIMC_CAP_DEBUG
 #ifdef fimc_dbg
@@ -276,6 +283,8 @@ static int fimc_camera_start(struct fimc_control *ctrl)
 		if (ret != -ENOIOCTLCMD)
 			return ret;
 	} else {
+		fimc_info1("%s: cam_frmsize=%dx%d, vtmode=%d\n",__func__,cam_frmsize.discrete.width,
+			cam_frmsize.discrete.height,vtmode);
 		if (vtmode == 1 && device_id != 0 && (ctrl->cap->rotate == 90 || ctrl->cap->rotate == 270)) {
 			ctrl->cam->window.left = 136;
 			ctrl->cam->window.top = 0;
@@ -364,7 +373,7 @@ static int fimc_capture_scaler_info(struct fimc_control *ctrl)
 	sc->real_width = sx;
 	sc->real_height = sy;
 
-	fimc_dbg("%s: CamOut (%d, %d), TargetOut (%d, %d)\n", \
+	fimc_info1("%s: CamOut (%d, %d), TargetOut (%d, %d)\n", \
 			__func__, sx, sy, tx, ty);
 
 	if (sx <= 0 || sy <= 0) {
@@ -870,7 +879,11 @@ int fimc_s_fmt_vid_capture(struct file *file, void *fh, struct v4l2_format *f)
 	int ret = 0;
 	int depth;
 
-	fimc_dbg("%s\n", __func__);
+//	fimc_dbg("%s\n", __func__);
+	fimc_info1("%s called: w/h:%d/%d fmt:"FOURCC_FORMAT", size: %d, field: %d\n"
+		,__func__,
+		f->fmt.pix.width,f->fmt.pix.height, FOURCC_ARGS(f->fmt.pix.pixelformat),
+		f->fmt.pix.sizeimage,f->fmt.pix.field);
 
 	if (!ctrl->cam || !ctrl->cam->sd) {
 		fimc_err("%s: No capture device.\n", __func__);
@@ -1529,7 +1542,10 @@ int fimc_s_crop_capture(void *fh, struct v4l2_crop *a)
 	struct fimc_control *ctrl = ((struct fimc_prv_data *)fh)->ctrl;
 	int ret = 0;
 
-	fimc_dbg("%s\n", __func__);
+//	fimc_dbg("%s\n", __func__);
+	fimc_info1("%s called: c l/t/w/h:%d/%d/%d/%d\n"
+		,__func__,
+		a->c.left,a->c.top,a->c.width,a->c.height);
 
 	if (!ctrl->cap) {
 		fimc_err("%s: No capture device.\n", __func__);

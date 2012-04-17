@@ -29,6 +29,13 @@
 #include <plat/csis.h>
 #include "csis.h"
 
+#define FOURCC_ARGS(fourcc) ((char) ((fourcc)     &0xff)), \
+        ((char) (((fourcc)>>8 )&0xff)), \
+        ((char) (((fourcc)>>16)&0xff)), \
+        ((char) (((fourcc)>>24)&0xff))
+
+#define FOURCC_FORMAT  "%c%c%c%c"
+
 static struct s3c_csis_info *s3c_csis;
 
 static struct s3c_platform_csis *to_csis_plat(struct device *dev)
@@ -218,8 +225,8 @@ void s3c_csis_start(int lanes, int settle, int align, int width,
 	if (s3c_csis->initialized)
 		return;
 
-	printk(KERN_INFO "%s: width %d, height %d pixel format %d\n",
-			__func__, width, height, pixel_format);
+	printk(KERN_INFO "%s: width %d, height %d pixel format "FOURCC_FORMAT"\n",
+		__func__, width, height, FOURCC_ARGS(pixel_format));
 
 	pdata = to_csis_plat(s3c_csis->dev);
 	if (pdata->cfg_phy_global)
