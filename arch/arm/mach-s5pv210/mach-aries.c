@@ -7255,7 +7255,7 @@ static struct resource wifi_resources[] = {
 #if !defined(CONFIG_S5PC110_DEMPSEY_BOARD)
 		.name	= "bcm4329_wlan_irq",
 #else
-		.name	= "bcm4330_wlan_irq",
+		.name	= "bcmdhd_wlan_irq",
 #endif
 		.start	= IRQ_EINT(20),
 		.end	= IRQ_EINT(20),
@@ -7344,7 +7344,7 @@ static struct platform_device sec_device_wifi = {
 #if !defined(CONFIG_S5PC110_DEMPSEY_BOARD)
 	.name			= "bcm4329_wlan",
 #else
-	.name			= "bcm4330_wlan",
+	.name			= "bcmdhd_wlan",
 #endif
 	.id			= 1,
 	.num_resources		= ARRAY_SIZE(wifi_resources),
