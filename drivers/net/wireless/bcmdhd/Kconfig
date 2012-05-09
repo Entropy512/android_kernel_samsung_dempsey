@@ -1,18 +1,54 @@
-
-config BCM4334
-	tristate "---Broadcom WiFi Driver for 4334"
-	depends on WLAN && CFG80211
+config BCMDHD
+	tristate "Broadcom 4329/30 wireless cards support"
+	depends on MMC
 	---help---
-		Select this option to build Broadcom wlan driver
+	  This module adds support for wireless adapters based on
+	  Broadcom 4329/30 chipset.
 
-config BCM4330
-	tristate "---Broadcom WiFi Driver for 4330"
-	depends on WLAN && CFG80211
-	---help---
-		Select this option to build Broadcom wlan driver
+	  This driver uses the kernel's wireless extensions subsystem.
 
-config BROADCOM_WIFI_RESERVED_MEM
-	bool "BROADCOM Reserved memory for wifi device"
-	depends on (BCM4330 || BCM4334)
+	  If you choose to build a module, it'll be called dhd. Say M if
+	  unsure.
+
+config BCMDHD_FW_PATH
+	depends on BCMDHD
+	string "Firmware path"
+	default "/system/etc/firmware/fw_bcmdhd.bin"
 	---help---
-		This is a configuration for broadcom WLAN driver.
+	  Path to the firmware file.
+
+config BCMDHD_NVRAM_PATH
+	depends on BCMDHD
+	string "NVRAM path"
+	default "/system/etc/wifi/bcmdhd.cal"
+	---help---
+	  Path to the calibration file.
+
+config BCMDHD_WEXT
+	bool "Enable WEXT support"
+	depends on BCMDHD && CFG80211 = n
+	select WIRELESS_EXT
+	select WEXT_PRIV
+	help
+	  Enables WEXT support
+
+config DHD_USE_STATIC_BUF
+	bool "Enable memory preallocation"
+	depends on BCMDHD
+	default n
+	---help---
+	  Use memory preallocated in platform
+
+config DHD_USE_SCHED_SCAN
+	bool "Use CFG80211 sched scan"
+	depends on BCMDHD && CFG80211
+	default n
+	---help---
+	  Use CFG80211 sched scan
+
+config DHD_ENABLE_P2P
+	bool "Enable Wifi Direct"
+	depends on BCMDHD && CFG80211
+	default n
+	---help---
+	  Use Enable Wifi Direct
