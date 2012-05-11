@@ -1032,6 +1032,7 @@ CONFIG_WLAN=y
 CONFIG_BCMDHD=m
 CONFIG_BCMDHD_FW_PATH="/system/vendor/firmware/fw_bcmdhd.bin"
 CONFIG_BCMDHD_NVRAM_PATH="/system/etc/wifi/nvram_net.txt"
+CONFIG_DHD_USE_STATIC_BUF=y
 # CONFIG_HOSTAP is not set
 # CONFIG_IWM is not set
 # CONFIG_LIBERTAS is not set
