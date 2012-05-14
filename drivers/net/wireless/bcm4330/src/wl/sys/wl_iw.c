@@ -73,7 +73,8 @@ typedef const struct si_pub  si_t;
 #ifndef IW_AUTH_KEY_MGMT_CCKM
 #define IW_AUTH_KEY_MGMT_CCKM	0x10
 #endif
-#define DOT11_LEAP_AUTH		0x80	/* LEAP authentication frame payload constants */
+
+#define DOT11_LEAP_AUTH		0x80	/* LEAP authentication frame payload constants */
 #endif /* BCMCCX */
 
 #define WL_IW_USE_ISCAN  1
@@ -3772,6 +3773,12 @@ wl_iw_handle_scanresults_ies(char **event_p, char *end,
 			wpa_snprintf_hex(buf + 10, 2+1, &(ie->len), 1);
 			wpa_snprintf_hex(buf + 12, 2*ie->len+1, ie->data, ie->len);
 			event = IWE_STREAM_ADD_POINT(info, event, end, &iwe, buf);
+			
+			
+			kfree(buf);
+			
+			
+			
 #endif 
 			break;
 		}
@@ -5497,7 +5504,8 @@ wl_iw_set_wpaauth(
 			else if (iw->wpaversion == IW_AUTH_WPA_VERSION_WPA2)
 				val = WPA2_AUTH_PSK;
 			else /* IW_AUTH_WPA_VERSION_DISABLED */
-				val = WPA_AUTH_DISABLED;		} 
+				val = WPA_AUTH_DISABLED;
+		} 
 #ifdef BCMCCX
 		else if (paramval & IW_AUTH_KEY_MGMT_CCKM) {
 			if (iw->wpaversion == IW_AUTH_WPA_VERSION_WPA) {
@@ -5542,7 +5550,8 @@ wl_iw_set_wpaauth(
 		else if (paramval == IW_AUTH_ALG_SHARED_KEY)
 			val = 1;
 		else if (paramval == (IW_AUTH_ALG_OPEN_SYSTEM | IW_AUTH_ALG_SHARED_KEY))
-			val = 2;#ifdef BCMCCX
+			val = 2;
+#ifdef BCMCCX
 		else if (paramval == IW_AUTH_ALG_LEAP)
 			val = DOT11_LEAP_AUTH;
 #endif /* BCMCCX */		
@@ -5653,7 +5662,8 @@ wl_iw_get_wpaauth(
 	case IW_AUTH_KEY_MGMT:
 		/* psk, 1x */
 		if ((error = dev_wlc_intvar_get(dev, "wpa_auth", &val)))
-			return error;#ifdef BCMCCX
+			return error;
+#ifdef BCMCCX
 		if (VAL_CCKM(val))
 			paramval = IW_AUTH_KEY_MGMT_CCKM;
 		else
@@ -7467,7 +7477,8 @@ wl_iw_get_ciq_counters(
 	counter.dwpkt_rcts_sent=dtoh32(cnt.txctsfrm) + dtoh32(cnt.txrtsfrm) ;
 	counter.dwpkt_rcts_rcvd=dtoh32(cnt.rxctsucast) + dtoh32(cnt.rxrtsucast);
 	counter.dwpkt_crcerr_rcvd=dtoh32(cnt.rxcrc);
-	counter.dwpkt_retry=dtoh32(cnt.txretry);	counter.w_assoc_reject = ciq_assoc_reject_cnt;
+	counter.dwpkt_retry=dtoh32(cnt.txretry);
+	counter.w_assoc_reject = ciq_assoc_reject_cnt;
 	counter.w_assoc_timeout = ciq_assoc_timeout;
 	counter.w_auth_reject = ciq_auth_reject_cnt;
 	counter.w_disassoc = ciq_disassoc_cnt;
@@ -7497,7 +7508,8 @@ wl_iw_get_cckm_rn(
 	{
 		return error;
 	}
-	memcpy(extra, &rn, sizeof(u32));
+
+	memcpy(extra, &rn, sizeof(u32));
 	wrqu->data.length = sizeof(u32);
 
 	return 0;
@@ -7515,7 +7527,8 @@ wl_iw_set_cckm_krk(
 	u8 key[16];
 
 	WL_TRACE(("%s: wl_iw_set_cckm_krk\n", dev->name));
-	memcpy(key, extra+strlen("set cckm_krk")+1, 16);
+
+	memcpy(key, extra+strlen("set cckm_krk")+1, 16);
 
 	if ((error = dev_wlc_bufvar_set(dev, "cckm_krk", key, sizeof(key))))
 		return error;
@@ -7536,7 +7549,8 @@ wl_iw_get_assoc_res_ies(
 	u32 resp_ies_len = 0;
 
 	WL_TRACE(("%s: wl_iw_get_assoc_res_ies\n", dev->name));
-	if ((error = dev_wlc_bufvar_get(dev, "assoc_info", buf, sizeof(buf))))
+
+	if ((error = dev_wlc_bufvar_get(dev, "assoc_info", buf, sizeof(buf))))
 		return error;
 
 	memcpy(&assoc_info, buf, sizeof(wl_assoc_info_t));
@@ -7547,7 +7561,8 @@ wl_iw_get_assoc_res_ies(
 	if (assoc_info.resp_len) {
 		resp_ies_len = assoc_info.resp_len - sizeof(struct dot11_assoc_resp);
 	}
-	/* first 4 bytes are ie len */
+
+	/* first 4 bytes are ie len */
 	memcpy(extra, &resp_ies_len, sizeof(u32));
 	wrqu->data.length = sizeof(u32);
 
@@ -7555,7 +7570,8 @@ wl_iw_get_assoc_res_ies(
 	if (resp_ies_len) {
 		if ((error = dev_wlc_bufvar_get(dev, "assoc_resp_ies", buf, sizeof(buf))))
 			return error;
-		memcpy(extra+sizeof(u32), buf, resp_ies_len);
+
+		memcpy(extra+sizeof(u32), buf, resp_ies_len);
 		wrqu->data.length += resp_ies_len;
 	}
 
@@ -7679,7 +7695,8 @@ wl_iw_set_priv(
 #ifdef CIQ_SUPPORT
 		else if (strnicmp(extra, "COUNTERS", strlen("COUNTERS")) == 0) 
 			ret = wl_iw_get_ciq_counters(dev, info, (union iwreq_data *)dwrq, extra);
-#endif#ifdef BCMCCX
+#endif
+#ifdef BCMCCX
 	    else if (strnicmp(extra, "get cckm_rn", strlen("get cckm_rn")) == 0)
 			ret = wl_iw_get_cckm_rn(dev, info, (union iwreq_data *)dwrq, extra);
 	    else if (strnicmp(extra, "set cckm_krk", strlen("set cckm_krk")) == 0)
@@ -8297,14 +8314,16 @@ wl_iw_event(struct net_device *dev, wl_event_msg_t *e, void* data)
 		if (status == WLC_E_STATUS_FAIL) {
 			ciq_assoc_reject_cnt++;
 		}
-#endif#ifdef BCMCCX
+#endif
+#ifdef BCMCCX
 		/* save current bssid */
 		memcpy(g_current_bssid, &e->addr, ETHER_ADDR_LEN);
 #endif /* BCMCCX */
 		memcpy(wrqu.addr.sa_data, &e->addr, ETHER_ADDR_LEN);
 		wrqu.addr.sa_family = ARPHRD_ETHER;
 		cmd = IWEVREGISTERED;
-		break;#ifdef BCMCCX
+		break;
+#ifdef BCMCCX
 	case WLC_E_REASSOC:
 		/* save current bssid */
 		memcpy(g_current_bssid, &e->addr, ETHER_ADDR_LEN);
@@ -8339,7 +8358,8 @@ wl_iw_event(struct net_device *dev, wl_event_msg_t *e, void* data)
 			wl_iw_send_priv_event(priv_dev, "STA_LEAVE");
 			goto wl_iw_event_end;
 		}
-#endif #ifdef BCMCCX
+#endif 
+#ifdef BCMCCX
 		/* ignore deauth from previous AP after roaming */
 		if (memcmp(g_current_bssid, &e->addr, 6) != 0) {
 			WL_ERROR(("Deauth[%d] from different BSSID\n", event_type));
@@ -8353,7 +8373,8 @@ wl_iw_event(struct net_device *dev, wl_event_msg_t *e, void* data)
 		cmd = SIOCGIWAP;
 		bzero(wrqu.addr.sa_data, ETHER_ADDR_LEN);
 		wrqu.addr.sa_family = ARPHRD_ETHER;
-		bzero(&extra, ETHER_ADDR_LEN);#ifdef BCMCCX
+		bzero(&extra, ETHER_ADDR_LEN);
+#ifdef BCMCCX
 		}
 #endif /* BCMCCX */		
 		break;
