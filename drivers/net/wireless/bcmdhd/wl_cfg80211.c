@@ -4488,11 +4488,11 @@ static s32 wl_setup_wiphy(struct wireless_dev *wdev, struct device *sdiofunc_dev
 {
 	s32 err = 0;
 	wdev->wiphy =
-	    wiphy_new(&wl_cfg80211_ops, sizeof(struct wl_priv));
-	if (unlikely(!wdev->wiphy)) {
+		    wiphy_new(&wl_cfg80211_ops, sizeof(struct wl_priv) + sizeof_iface);
+	if (!wdev->wiphy){
 		WL_ERR(("Couldn not allocate wiphy device\n"));
 		err = -ENOMEM;
-		return err;
+		goto wiphy_new_out;
 	}
 	set_wiphy_dev(wdev->wiphy, sdiofunc_dev);
 	wdev->wiphy->max_scan_ie_len = WL_SCAN_IE_LEN_MAX;
