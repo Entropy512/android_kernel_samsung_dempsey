@@ -2512,9 +2512,9 @@ dhd_osl_attach(void *pdev, uint bustype)
 void
 dhd_osl_detach(osl_t *osh)
 {
-	if (MALLOCED(osh)) {
-		DHD_ERROR(("%s: MEMORY LEAK %d bytes\n", __FUNCTION__, MALLOCED(osh)));
-	}
+//	if (MALLOCED(osh)) {
+//		DHD_ERROR(("%s: MEMORY LEAK %d bytes\n", __FUNCTION__, MALLOCED(osh)));
+//	}
 	osl_detach(osh);
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 27))
 	up(&dhd_registration_sem);
