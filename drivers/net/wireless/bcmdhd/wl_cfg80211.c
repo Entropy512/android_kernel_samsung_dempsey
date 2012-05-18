@@ -289,7 +289,8 @@ static __used s32 wl_add_ie(struct wl_priv *wl, u8 t, u8 l, u8 *v);
 static s32 wl_mrg_ie(struct wl_priv *wl, u8 *ie_stream, u16 ie_size);
 static s32 wl_cp_ie(struct wl_priv *wl, u8 *dst, u16 dst_size);
 static u32 wl_get_ielen(struct wl_priv *wl);
-
+static struct wireless_dev *wl_alloc_wdev(s32 sizeof_iface,
+                                          struct device *dev);
 
 static s32 wl_setup_wiphy(struct wireless_dev *wdev, struct device *dev);
 static void wl_free_wdev(struct wl_priv *wl);
