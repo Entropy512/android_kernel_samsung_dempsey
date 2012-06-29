@@ -32,9 +32,6 @@
 #define dprintk(msg...) cpufreq_debug_printk(CPUFREQ_DEBUG_CORE, \
 						"cpufreq-core", msg)
 
-/* UV */
-int exp_UV_mV[5] = { 1300000, 1200000, 1050000, 950000, 950000 };
-
 /**
  * The "cpufreq driver" - the arch- or hardware-dependent low
  * level driver of CPUFreq support, and its spinlock. This lock
@@ -651,28 +648,9 @@ static ssize_t show_scaling_setspeed(struct cpufreq_policy *policy, char *buf)
 }
 
 /* sysfs interface for UV control */
-static ssize_t show_UV_mV_table(struct cpufreq_policy *policy, char *buf) {
-
-      return sprintf(buf, "1200mhz: %d mV\n800mhz: %d mV\n400mhz: %d mV\n200mhz: %d mV\n100mhz: %d mV\n", exp_UV_mV[0]/1000, exp_UV_mV[1]/1000, exp_UV_mV[2]/1000, exp_UV_mV[3]/1000, exp_UV_mV[4]/1000);
-
-}
-
-static ssize_t store_UV_mV_table(struct cpufreq_policy *policy,
-                                      const char *buf, size_t count) {
-
-      unsigned int ret = -EINVAL;
-      int i = 0;
-      ret = sscanf(buf, "%d %d %d %d %d", &exp_UV_mV[0], &exp_UV_mV[1], &exp_UV_mV[2], &exp_UV_mV[3], &exp_UV_mV[4]);
-      if(ret != 5) {
-              return -EINVAL;
-      }
-      else
-              for( i = 0; i < 5; i++ )
-              {
-                 exp_UV_mV[i] *= 1000;
-              }
-              return count;
-}
+extern ssize_t show_UV_mV_table(struct cpufreq_policy *policy, char *buf);
+extern ssize_t store_UV_mV_table(struct cpufreq_policy *policy,
+                                      const char *buf, size_t count);
 
 /**
  * show_scaling_driver - show the current cpufreq HW/BIOS limitation
