@@ -22,10 +22,10 @@ dir /proc 755 0 0
 dir /sys 755 0 0
 dir /lib 755 0 0 
 dir /lib/modules 755 0 0
-file /stage1/busybox usr/infuse4g_initramfs_files/busybox 755 0 0
-file /stage1/init usr/infuse4g_initramfs_files/init 755 0 0
-file /lib/modules/fsr.ko usr/infuse4g_initramfs_files/fsr.module 555 0 0
-file /lib/modules/fsr_stl.ko usr/infuse4g_initramfs_files/fsr_stl.module 555 0 0
+file /stage1/busybox source/usr/infuse4g_initramfs_files/busybox 755 0 0
+file /stage1/init source/usr/infuse4g_initramfs_files/init 755 0 0
+file /lib/modules/fsr.ko source/usr/infuse4g_initramfs_files/fsr.module 555 0 0
+file /lib/modules/fsr_stl.ko source/usr/infuse4g_initramfs_files/fsr_stl.module 555 0 0
 slink /stage1/sh busybox 755 0 0
 slink /stage1/insmod busybox 755 0 0
 slink /stage1/mount busybox 755 0 0
