@@ -36,6 +36,10 @@
 #include <linux/clk.h>
 #include <linux/err.h>
 
+#if defined(SUPPORT_ACTIVE_POWER_MANAGEMENT)
+#include <mach/cpu-freq-v210.h>
+#endif
+
 #define REAL_HARDWARE 1
 #define SGX540_BASEADDR 0xf3000000
 #define MAPPING_SIZE 0x10000
@@ -90,7 +94,7 @@ static PVRSRV_ERROR EnableSGXClocks(void)
 {
 	regulator_enable(g3d_pd_regulator);
 	clk_enable(g3d_clock);
-
+	s5pv210_lock_dvfs_high_level(DVFS_LOCK_TOKEN_10, L4);
 	return PVRSRV_OK;
 }
 
@@ -98,6 +102,7 @@ static PVRSRV_ERROR DisableSGXClocks(void)
 {
 	clk_disable(g3d_clock);
 	regulator_disable(g3d_pd_regulator);
+	s5pv210_unlock_dvfs_high_level(DVFS_LOCK_TOKEN_10);
 
 	return PVRSRV_OK;
 }
