@@ -417,7 +417,7 @@ void s5pv210_lock_dvfs_high_level(uint nToken, uint perf_level)
 	uint freq_level;
 	struct cpufreq_policy *policy;
 
-	printk(KERN_DEBUG "%s : lock with token(%d) level(%d) current(%X)\n",
+	pr_debug("%s : lock with token(%d) level(%d) current(%X)\n",
 			__func__, nToken, perf_level, g_dvfs_high_lock_token);
 
 	if (g_dvfs_high_lock_token & (1 << nToken))
@@ -465,7 +465,7 @@ void s5pv210_unlock_dvfs_high_level(unsigned int nToken)
 
 	//mutex_unlock(&dvfs_high_lock);
 
-	printk(KERN_DEBUG "%s : unlock with token(%d) current(%X) level(%d)\n",
+	pr_debug("%s : unlock with token(%d) current(%X) level(%d)\n",
 			__func__, nToken, g_dvfs_high_lock_token, g_dvfs_high_lock_limit);
 }
 EXPORT_SYMBOL(s5pv210_unlock_dvfs_high_level);
